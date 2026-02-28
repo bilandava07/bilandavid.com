@@ -1304,7 +1304,19 @@ that do not fit the original layout */
 }
 
 
-/* * {
-    outline: 1px solid red;
-} */
+/* Links styles shared across different pages */ 
+
+.links{
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.3s ease; 
+    display: inline-block; 
+    border-bottom: 1.2px solid transparent; /* invisible by default */
+}
+
+.links:hover {
+    border-bottom-color: var(--text-color);   
+}
 
