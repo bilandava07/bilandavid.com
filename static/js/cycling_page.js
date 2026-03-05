@@ -47,5 +47,12 @@ function scrollToHero() {
 
 
 
+// Arrow click scroll
+arrow.addEventListener('click', scrollToMain);
+
+
+
+
+
 
 window.addEventListener('scroll', updateNavbar);
