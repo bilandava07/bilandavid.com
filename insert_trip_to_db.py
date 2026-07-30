@@ -99,14 +99,15 @@ def add_media_to_the_trip(cursor: sqlite3.Cursor, trip_id : int | None, all_file
             main_image_exists = True
 
             # Compress and save images to images/compressed_previews too
-            quality = 5 
+            quality = 4
+            preview_width = 640 
 
             # Run FFmpeg compression
             cmd = [
                 "ffmpeg",
                 "-y",  # overwrite existing output
                 "-i", input_path,
-                "-vf", "scale='if(gt(iw,ih),1600,-1)':'if(gt(ih,iw),1600,-1)'",
+                "-vf", f"scale='if(gt(iw,ih),{preview_width},-1)':'if(gt(ih,iw),{preview_width},-1)'",
                 "-q:v", str(quality),
                 output_path
             ]
@@ -122,13 +123,14 @@ def add_media_to_the_trip(cursor: sqlite3.Cursor, trip_id : int | None, all_file
 
         # Compress and save images to images/compressed
         quality = 2 
+        regular_compressed_width = 1200
 
         # Run FFmpeg compression
         cmd = [
             "ffmpeg",
             "-y",  # overwrite existing output
             "-i", input_path,
-            "-vf", "scale='if(gt(iw,ih),1600,-1)':'if(gt(ih,iw),1600,-1)'",
+            "-vf", f"scale='if(gt(iw,ih),{regular_compressed_width},-1)':'if(gt(ih,iw),{regular_compressed_width},-1)'",
             "-q:v", str(quality),
             output_path
         ]
