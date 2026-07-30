@@ -9,33 +9,30 @@ from slugify import slugify
 from fit_files_to_geojson_merge import parse_and_merge_fit_files
 
 
-def add_images_to_trip(cursor: sqlite3.Cursor, trip_id : int | None, all_files_in_dir : list[str], full_path_to_dir: str) -> None:
+def add_media_to_the_trip(cursor: sqlite3.Cursor, trip_id : int | None, all_files_in_dir : list[str], full_path_to_dir: str) -> None:
     '''
-    Prompts the user for the path to the directory with images and then adds them to the trip
+    Prompts the user for the path to the directory with images and an optional video and then adds them to the trip
     '''
 
-    valid_extensions = ('.jpeg', '.jpg', '.png')
+    valid_image_extensions = ('.jpeg', '.jpg')
+    valid_video_extensions = ('.mp4')
 
     images_to_add : list[str] = []
+    mp4_video_filename = None
 
     # Only add images 
     for file in all_files_in_dir:
-        if file.lower().endswith(valid_extensions):
-            images_to_add.append(file)
+        if file.lower().endswith(valid_image_extensions):
+            images_to_add.append(file) 
 
-
-    # Add optional mp4 video file if it exists
-    mp4_video_filename = None
-    for file in all_files_in_dir:
-
-        if file.lower().endswith('.mp4'):
+        elif file.lower().endswith(valid_video_extensions):
+            # Add optional mp4 video file if it exists
             mp4_video_filename = file
+        else:
+            print(f"Not a valid image or video extensions. Skipping {file}")
 
 
     if mp4_video_filename is not None:
-
-
-
         # Copy the video to the project directory
 
         full_path = os.path.join(full_path_to_dir, mp4_video_filename)
@@ -43,7 +40,6 @@ def add_images_to_trip(cursor: sqlite3.Cursor, trip_id : int | None, all_files_i
         project_videso_dir = '/Users/dava/Projects/web_dev/my_website/static/videos'
 
         dest_path = os.path.join(project_videso_dir, mp4_video_filename)
-
 
         # --- Compress full video (with faststart for web playback) ---
         compress_cmd = [
@@ -71,7 +67,6 @@ def add_images_to_trip(cursor: sqlite3.Cursor, trip_id : int | None, all_files_i
         cursor.execute(insert_statement, (mp4_video_filename, trip_id))
 
         print("Compressed and inserted the video")
-
 
 
     # Proccess found images
@@ -124,7 +119,6 @@ def add_images_to_trip(cursor: sqlite3.Cursor, trip_id : int | None, all_files_i
         ]
 
         subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
-
 
         # Figure out the dimensions of the image
         image_file = Image.open(output_path)
@@ -257,7 +251,7 @@ def insert_trip_to_db(connection: sqlite3.Connection, cursor: sqlite3.Cursor):
 
 
     # Add images to the trip
-    add_images_to_trip(cursor=cursor, trip_id=newly_added_trip_id, all_files_in_dir=all_files_in_dir, full_path_to_dir=full_path_to_dir)
+    add_media_to_the_trip(cursor=cursor, trip_id=newly_added_trip_id, all_files_in_dir=all_files_in_dir, full_path_to_dir=full_path_to_dir)
             
     # Test if the row was added correctly
     successfully_added = test_query_id(cursor=cursor, row_id=newly_added_trip_id)
