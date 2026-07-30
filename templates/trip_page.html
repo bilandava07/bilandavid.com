@@ -1,5 +1,18 @@
 {% extends 'base.html' %}
 
+{% block meta_og_properties %}
+<meta property="og:title" content="{{ trip.trip_name ~ ' | Cycling' }}">
+<meta property="og:type" content="article" />
+<meta property="og:image"
+      content="{{ url_for('static', filename='images/compressed/' ~ main_image.image_filename, _external=True) }}">
+<meta property="og:url" content="{{ request.url }}">
+<meta property="og:description"
+      content="{{ trip.trip_description|striptags|truncate(160, True, '...') }}">
+
+{% endblock %}
+
+
+
 
 {% block preload_assets %}
 <link rel="preload" as="image" href="{{ url_for('static', filename='images/compressed/' + main_image.image_filename) }}"> 
