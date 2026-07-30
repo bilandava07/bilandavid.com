@@ -14,16 +14,17 @@ def add_media_to_the_trip(cursor: sqlite3.Cursor, trip_id : int | None, all_file
     Prompts the user for the path to the directory with images and an optional video and then adds them to the trip
     '''
 
-    valid_image_extensions = ('.jpeg', '.jpg')
+    valid_image_extensions = ('.jpeg', '.jpg', '.heic')
     valid_video_extensions = ('.mp4')
 
     images_to_add : list[str] = []
     mp4_video_filename = None
 
-    # Only add images 
+
+    # Find names of images and video to add 
     for file in all_files_in_dir:
         if file.lower().endswith(valid_image_extensions):
-            images_to_add.append(file) 
+            images_to_add.append(file)
 
         elif file.lower().endswith(valid_video_extensions):
             # Add optional mp4 video file if it exists
@@ -71,17 +72,31 @@ def add_media_to_the_trip(cursor: sqlite3.Cursor, trip_id : int | None, all_file
 
     # Proccess found images
     main_image_exists = False
+    project_compressed_previews_dir = '/Users/dava/Projects/web_dev/my_website/static/images/compressed_previews'
 
     for image_filename in images_to_add:
-        input_path = os.path.join(full_path_to_dir, image_filename)
 
 
-        if image_filename.lower().startswith('main'):
+        # Iterate through files and convert all found heic to jpeg
+        if image_filename.lower().endswith('.heic'):
+            base = image_filename.rsplit('.', 1)[0]
+            new_file_name = base + '.jpeg'
+            heic_input_path = os.path.join(full_path_to_dir, image_filename)
+            jpeg_output_path = os.path.join(full_path_to_dir, new_file_name)
+            heic_to_jpeg_command = ["heif-convert", heic_input_path, jpeg_output_path]
+            subprocess.run(heic_to_jpeg_command, check=True)
+
+            # Delete original HEIC after successful conversion
+            os.remove(heic_input_path)
+            image_filename = new_file_name
+
+
+        input_path = os.path.join(full_path_to_dir, image_filename)   
+
+        if image_filename.lower().startswith('main'): 
+            output_path = os.path.join(project_compressed_previews_dir, image_filename)
             is_main = 1
             main_image_exists = True
-
-            project_compressed_previews_dir = '/Users/dava/Projects/web_dev/my_website/static/images/compressed_previews' 
-            output_path = os.path.join(project_compressed_previews_dir, image_filename)
 
             # Compress and save images to images/compressed_previews too
             quality = 5 
