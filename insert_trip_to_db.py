@@ -14,12 +14,11 @@ def add_media_to_the_trip(cursor: sqlite3.Cursor, trip_id : int | None, all_file
     Prompts the user for the path to the directory with images and an optional video and then adds them to the trip
     '''
 
-    valid_image_extensions = ('.jpeg', '.jpg', '.heic')
+    valid_image_extensions = ('.jpeg', '.jpg', '.heic', '.png')
     valid_video_extensions = ('.mp4')
 
     images_to_add : list[str] = []
     mp4_video_filename = None
-
 
     # Find names of images and video to add 
     for file in all_files_in_dir:
@@ -75,23 +74,40 @@ def add_media_to_the_trip(cursor: sqlite3.Cursor, trip_id : int | None, all_file
     project_compressed_previews_dir = '/Users/dava/Projects/web_dev/my_website/static/images/compressed_previews'
 
     for image_filename in images_to_add:
+        base = image_filename.rsplit('.', 1)[0]
+        extension = image_filename.rsplit('.', 1)[1]
+        new_file_name = base + '.jpeg'
 
+        input_path = os.path.join(full_path_to_dir, image_filename)
+        output_path = os.path.join(full_path_to_dir, new_file_name)
 
-        # Iterate through files and convert all found heic to jpeg
-        if image_filename.lower().endswith('.heic'):
-            base = image_filename.rsplit('.', 1)[0]
-            new_file_name = base + '.jpeg'
-            heic_input_path = os.path.join(full_path_to_dir, image_filename)
-            jpeg_output_path = os.path.join(full_path_to_dir, new_file_name)
-            heic_to_jpeg_command = ["heif-convert", heic_input_path, jpeg_output_path]
+        # convert all found heic to jpeg
+        if extension == 'heic':
+            heic_to_jpeg_command = ["heif-convert", input_path, output_path]
             subprocess.run(heic_to_jpeg_command, check=True)
 
             # Delete original HEIC after successful conversion
-            os.remove(heic_input_path)
+            os.remove(input_path)
             image_filename = new_file_name
 
+        # Convert all found heic to jpeg
+        elif extension == 'png':
+            png_to_jpeg_command = [
+                "ffmpeg",
+                "-y",
+                "-i", input_path,
+                "-q:v", "1",
+                "-frames:v", "1",
+                "-update", "1",
+                output_path,
+            ]
+            subprocess.run(png_to_jpeg_command, check=True)  
 
-        input_path = os.path.join(full_path_to_dir, image_filename)   
+            # Delete original PNG after successful conversion
+            os.remove(input_path)
+            image_filename = new_file_name
+
+        input_path = os.path.join(full_path_to_dir, new_file_name)
 
         if image_filename.lower().startswith('main'): 
             output_path = os.path.join(project_compressed_previews_dir, image_filename)
@@ -117,7 +133,7 @@ def add_media_to_the_trip(cursor: sqlite3.Cursor, trip_id : int | None, all_file
             is_main = 0
 
 
-        project_compressed_images_dir = '/Users/dava/Projects/web_dev/my_website/static/images/compressed'
+        project_compressed_images_dir = '/Users/dava/projects/web_dev/my_website/static/images/compressed'
 
         output_path = os.path.join(project_compressed_images_dir, image_filename)
 
@@ -136,6 +152,7 @@ def add_media_to_the_trip(cursor: sqlite3.Cursor, trip_id : int | None, all_file
         ]
 
         subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+
 
         # Figure out the dimensions of the image
         image_file = Image.open(output_path)
