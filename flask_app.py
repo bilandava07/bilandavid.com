@@ -301,8 +301,8 @@ def cycling_page():
 
 
 
-@app.route('/trip/<int:trip_id>/<trip_slug>')
-def trip_page(trip_id : int, trip_slug : str):
+@app.route("/cycling/<trip_slug>/<int:trip_id>")
+def trip_page(trip_slug : str, trip_id : int):
     '''Renders one trip's page with stats, photos, a map etc.'''
     cursor = get_db(TRIPS_DATABASE).cursor()
 
