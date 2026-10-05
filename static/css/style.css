@@ -1313,16 +1313,30 @@ that do not fit the original layout */
 /* Links styles shared across different pages */ 
 
 .links{
-    text-decoration: none;
     color: var(--text-color);
     font-weight: 600;
     cursor: pointer;
-    transition: border-color 0.3s ease; 
-    display: inline-block; 
-    border-bottom: 1.2px solid transparent; /* invisible by default */
+    text-decoration: underline;
+    text-decoration-color:  transparent; /* underline invisible by default */
+    text-underline-offset: 3px;
+    transition: text-decoration-color 0.2s ease, text-decoration-thickness 0.2s ease;
 }
 
-.links:hover {
-    border-bottom-color: var(--text-color);   
+.links:hover,
+.links:focus-visible {
+    text-decoration-color: var(--text-color);
+    text-decoration-thickness: 2px;
 }
 
+/* external link icon, included via templates/icons/external_link.svg */
+.link_icon {
+    width: 0.8em;
+    height: 0.8em;
+    margin-left: 0.25em;
+    vertical-align: -0.05em;
+}
+
+/* keeps e.g. "(link + icon)" from breaking before the closing bracket */
+.no_wrap {
+    white-space: nowrap;
+}

@@ -76,10 +76,10 @@
 
                 <p>
 
-                    Hi, my name is David! I’m a <a class="links" target="_blank"
-                        href="static/documents/transcript_of_records.pdf">student </a> at Ludwig Maximilian University
-                    of
-                    Munich with a passion for
+                    Hi, my name is David! I’m a student at Ludwig Maximilian University of Munich
+                    <span class="no_wrap">(<a class="links" target="_blank"
+                        href="static/documents/transcript_of_records.pdf">transcript of records{% include 'icons/external_link.svg' %}</a>)</span>
+                    with a passion for
                     computer
                     science and software
                     development.
@@ -94,8 +94,8 @@
 
 
                 I’ve built <a class="links" href="{{ url_for('projects_page') }}">a multiplayer Hanabi
-                    card game </a> in Python and <a class="links" href="{{ url_for('projects_page') }}">multiple self-hosted
-                    websites</a> running on my Raspberry Pi.
+                    card game{% include 'icons/external_link.svg' %}</a> in Python and <a class="links" href="{{ url_for('projects_page') }}">multiple self-hosted
+                    websites{% include 'icons/external_link.svg' %}</a> running on my Raspberry Pi.
                 For the cycling page of this website, I combined my love for cycling and coding by creating a dynamic trip-tracking
                 page
                 with maps, search, and photo galleries. By building 2 other portoflio websites, I have also gathered experience in modern frontend development with React.
