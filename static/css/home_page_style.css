@@ -79,8 +79,16 @@
     cursor: pointer;
 
     max-height: fit-content;
-    font-size: clamp(2rem, 1.8vw, 2.5rem);
+    font-size: clamp(2rem, 1.8vw, 2.7rem);
     transition: transform 0.35s;
+}
+
+/* flag svgs, included via templates/icons/flags/ */
+.language_flags_container .flag_icon {
+    display: block;
+    width: 0.9em;
+    height: 0.9em;
+    margin: 0.2em 0.05em; /* matches the 1em x 1.3em box the emoji had, the tooltip is positioned against it */
 }
 
 .language_flags_container .flag::after {
@@ -90,7 +98,7 @@
     padding: 15% 30%;
     border-radius: 0.4rem;
     position: absolute;
-    bottom: -50%;
+    bottom: -55%;
     left: 0%;
     background: var(--secondary-bg-color);
     color: var(--text-color);
